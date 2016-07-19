@@ -3,7 +3,7 @@
   <groupId>com.smartway</groupId>
   <artifactId>smartway-web</artifactId>
   <version>1.0.0</version>
-  <packaging>war</packaging>
+  <packaging>ear</packaging>
   <properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<smartway.core.version>1.0.0</smartway.core.version>
@@ -24,8 +24,10 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>1.7</source>
+					<target>1.7</target>
+					<outputDirectory>E:\Softwares\wildfly-8.0.0.Final\standalone\deployments</outputDirectory>
+					
 				</configuration>
 			</plugin>
 		</plugins>
