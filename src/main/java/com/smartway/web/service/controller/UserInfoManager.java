@@ -58,13 +58,16 @@ public class UserInfoManager {
 		
 	}
 	
-	@RequestMapping(value="/getall/{username}", method = RequestMethod.GET, produces= "application/json")
+	@RequestMapping(value="/getdetails/{username}", method = RequestMethod.GET, produces= "application/json")
 	public @ResponseBody JSONObject getUserInfo(@PathVariable("username") String username ){
 		logger.debug("Started fetching user data:"+username);
-		UserAuth userAuth = new UserAuth();
-		userAuth.setUserName(username);
-		userAuth = (UserAuth) userAuthService.getByExample(userAuth);
-		logger.info(userAuth.getPassword());
+		System.out.println("----->");
+		
+		Collection<UserAuth> userAuth =  userAuthService.findBySQLQuery("from USER_AUTH where USER_NAME="+username);
+		for (UserAuth userAuth2 : userAuth) {
+			System.out.println(userAuth2.getPassword());
+		}
+		//logger.info(userAuth.getPassword());
 		logger.debug("Completed fetching user data:"+username);
 		return (JSONObject) (new JSONObject()).put("status", "OK");
 	}
