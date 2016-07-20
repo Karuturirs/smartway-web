@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -16,60 +18,50 @@ import com.smartway.core.model.UserAuth;
 import com.smartway.core.model.UserInfo;
 import com.smartway.core.mysql.service.GenericService;
 import com.smartway.core.utils.Common;
+import com.smartway.core.utils.jdbcConnection;
+import com.smartway.web.common.GenerateUIPojo;
 
 
 
 @Controller
+@RequestMapping(value="/userinfo")
 public class UserInfoManager {
 	
+	private static Logger logger = Logger.getLogger(UserInfoManager.class);
 	@Autowired
 	GenericService userInfoService ;
 	GenericService userAuthService ;
 	/*private GsonBuilder gsonBuilder = new GsonBuilder();
     private Gson gson;*/
-	JSONObject error = new JSONObject();
+	JSONObject status = new JSONObject();
     
 	@RequestMapping(value = "/getall", method = RequestMethod.GET, produces= "application/json")
 	public @ResponseBody JSONObject getAllUserInfo(){
 		try{
-			System.out.println("-$-----");
+			logger.debug("Started fetching all user data");
 			Collection<UserInfo> userInfos = (Collection<UserInfo>) userInfoService.getAll();
 			List<UserInfo> listOfObject = new ArrayList<UserInfo>();
 	        for (UserInfo object : userInfos) {
-				UserInfo user =  new UserInfo();
-				user.setUserId(object.getUserId());
-				user.setFirstName(object.getFirstName());
-				user.setLastName(object.getLastName());
-				user.setBirthDate(object.getBirthDate());
-				user.setEmail(object.getEmail());
-				user.setGender(object.getGender());
-				user.setPhone(object.getPhone());
-				user.setUpdTs(object.getUpdTs());
-				List<UserAuth> listOfauth = new ArrayList<UserAuth>();
-				for (UserAuth userauth : object.getUserAuths()) {
-					UserAuth userAuth = new UserAuth();
-					userAuth.setUserName(userauth.getUserName());
-					//userAuth.setPassword(userauth.getPassword());
-					userAuth.setUpdTs(userauth.getUpdTs());
-					listOfauth.add(userAuth);
-				}
-				user.setUserAuths(listOfauth);
-				listOfObject.add(user);
+				listOfObject.add(new GenerateUIPojo().setUserInfoAndAuth(object));
 			}
 			UserInfoMaster userinfomaster = new UserInfoMaster();
-			System.out.println("################################## "+listOfObject.size());
-			
 			userinfomaster.setDataList(listOfObject);
-			//Common common = new Common();
 			JSONObject outputJson=(new Common()).pojo2Json(listOfObject);
+			logger.debug("End of the method getAllUserInfo() ");
 			return outputJson;
 		}catch(Exception e){
-			System.out.println("--"+e.getMessage());
-			error.put("ERROR", e.getMessage().toString());
+			logger.error(e.getMessage());
+			status.put("ERROR", e.getMessage().toString());
 			e.printStackTrace();
-			return error;
+			return status;
 		}
 		
+	}
+	
+	@RequestMapping(value="/{username}", method = RequestMethod.GET, produces= "application/json")
+	public @ResponseBody JSONObject getUserInfo(@PathVariable("username") String username ){
+		
+		return null;
 	}
 	
 	
