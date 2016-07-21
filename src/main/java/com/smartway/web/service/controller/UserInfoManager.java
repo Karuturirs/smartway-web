@@ -9,6 +9,7 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -63,16 +64,37 @@ public class UserInfoManager {
 		logger.debug("Started fetching user data:"+username);
 		System.out.println("----->");
 		
-		Collection<UserAuth> userAuth =  userAuthService.findBySQLQuery("from USER_AUTH where USER_NAME="+username);
+		Collection<UserAuth> userAuth =  userAuthService.findByHSQLQuery("from USER_AUTH where USER_NAME='"+username+"'");
 		for (UserAuth userAuth2 : userAuth) {
 			System.out.println(userAuth2.getPassword());
+			logger.info(userAuth2.getPassword());
 		}
-		//logger.info(userAuth.getPassword());
+
 		logger.debug("Completed fetching user data:"+username);
-		return (JSONObject) (new JSONObject()).put("status", "OK");
+		JSONObject job = new JSONObject();
+		job.put("dhfjdshf", "dsfdsfs");
+		return job;
 	}
 	
-	
+	@RequestMapping(value="/validate",method = RequestMethod.POST,headers = "Content-type=application/json")
+	public @ResponseBody JSONObject getUserInfo(@RequestBody JSONObject jsonObject){
+		logger.debug("Started fetching user validation");
+		System.out.println("----->"+jsonObject.get("username"));
+		JSONObject job = new JSONObject();
+		Collection<UserAuth> userAuth =  userAuthService.findByHSQLQuery("from USER_AUTH where USER_NAME='"+jsonObject.get("username")+"'");
+		for (UserAuth userAuth2 : userAuth) {
+			System.out.println(userAuth2.getPassword());
+			logger.info(userAuth2.getPassword());
+			if(userAuth2.getPassword().equals(jsonObject.get("password"))){
+				job.put("state", "Successful login");
+			}else{
+				job.put("ERROR", "Username or Password nto matched with the records.");
+			}
+		}
+
+		logger.debug("Completed fetching user validation:");
+		return job;
+	}
 	
 }
 
