@@ -31,6 +31,7 @@ public class UserInfoManager {
 	private static Logger logger = Logger.getLogger(UserInfoManager.class);
 	@Autowired
 	GenericService userInfoService ;
+	@Autowired
 	GenericService userAuthService ;
 	/*private GsonBuilder gsonBuilder = new GsonBuilder();
     private Gson gson;*/
@@ -64,7 +65,7 @@ public class UserInfoManager {
 		logger.debug("Started fetching user data:"+username);
 		System.out.println("----->");
 		
-		Collection<UserAuth> userAuth =  userAuthService.findByHSQLQuery("from USER_AUTH where USER_NAME='"+username+"'");
+		Collection<UserAuth> userAuth =  userAuthService.findByHSQLQuery("from UserAuth where userName='"+username+"'");
 		for (UserAuth userAuth2 : userAuth) {
 			System.out.println(userAuth2.getPassword());
 			logger.info(userAuth2.getPassword());
@@ -72,7 +73,8 @@ public class UserInfoManager {
 
 		logger.debug("Completed fetching user data:"+username);
 		JSONObject job = new JSONObject();
-		job.put("dhfjdshf", "dsfdsfs");
+		job.put("state",true);
+		job.put("success", "Operation Success");
 		return job;
 	}
 	
@@ -81,13 +83,15 @@ public class UserInfoManager {
 		logger.debug("Started fetching user validation");
 		System.out.println("----->"+jsonObject.get("username"));
 		JSONObject job = new JSONObject();
-		Collection<UserAuth> userAuth =  userAuthService.findByHSQLQuery("from USER_AUTH where USER_NAME='"+jsonObject.get("username")+"'");
+		Collection<UserAuth> userAuth =  userAuthService.findByHSQLQuery("from UserAuth where userName='"+jsonObject.get("username")+"'");
 		for (UserAuth userAuth2 : userAuth) {
 			System.out.println(userAuth2.getPassword());
 			logger.info(userAuth2.getPassword());
 			if(userAuth2.getPassword().equals(jsonObject.get("password"))){
-				job.put("state", "Successful login");
+				job.put("state",true);
+				job.put("success", "Successful login");
 			}else{
+				job.put("state",false);
 				job.put("ERROR", "Username or Password nto matched with the records.");
 			}
 		}

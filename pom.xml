@@ -21,7 +21,9 @@
 		</dependency>
 	</dependencies>
   <build>
+  
 		<plugins>
+			
 			<plugin>
 	            <groupId>org.apache.maven.plugins</groupId>
 	            <artifactId>maven-war-plugin</artifactId>
@@ -33,23 +35,19 @@
 	            </configuration>
 	        </plugin>            
 
-			 <!-- JBoss AS plugin to deploy the war. -->
-	        <plugin>
-	            <groupId>org.jboss.as.plugins</groupId>
-	            <artifactId>jboss-as-maven-plugin</artifactId>
-	            <version>7.4.Final</version>
-	            <configuration>
-	                <force>true</force>
-	                <hostname>${jboss-as.deploy.hostname}</hostname>
-	                <username>${jboss-as.deploy.user}</username>
-	                <password>${jboss-as.deploy.pass.prod}</password>
-	                <fileNames>
-	                    <fileName>target/${plugin.war.warName}.war</fileName>
-	                </fileNames>
-	            </configuration>
-	        </plugin>
+			  <!-- JBoss AS plugin to deploy the war. -->
+	    	<plugin>
+				<groupId>org.wildfly.plugins</groupId>
+				<artifactId>wildfly-maven-plugin</artifactId>
+				<version>1.0.0.Final</version>
+				<configuration>
+					<hostname>${wildfly-hostname}</hostname>
+					<port>${wildfly-port}</port>
+					<username>${wildfly-username}</username>
+					<password>${wildfly-password}</password>
+				</configuration>
+			</plugin>
 		</plugins>
-		
-		
+				
 	</build>
 </project>
