@@ -116,5 +116,17 @@ public class UserInfoManager {
 		
 	}
 	
+	@RequestMapping(value="/{username}/adddevice", method = RequestMethod.POST, produces= "application/json")
+	public @ResponseBody JSONObject addDeviceToUser(@PathVariable("username") String username ) {
+		
+		return null;
+	}
+	
+	@RequestMapping(value="/{username}/listdevices", method = RequestMethod.GET, produces= "application/json")
+	public @ResponseBody JSONObject listDeviceOfUser(@PathVariable("username") String username ) {
+		
+		return null;
+	}
+	
 }
 
