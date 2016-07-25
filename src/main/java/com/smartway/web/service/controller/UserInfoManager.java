@@ -50,7 +50,7 @@ public class UserInfoManager {
 			Collection<UserInfo> userInfos = (Collection<UserInfo>) userInfoService.getAll();
 			List<UserInfo> listOfObject = new ArrayList<UserInfo>();
 	        for (UserInfo object : userInfos) {
-				listOfObject.add(new GenerateUIPojo().setUserInfoAndAuth(object));
+				listOfObject.add(new GenerateUIPojo().setUserInfoAuthAndDevice(object));
 			}
 			UserInfoMaster userinfomaster = new UserInfoMaster();
 			userinfomaster.setDataList(listOfObject);
