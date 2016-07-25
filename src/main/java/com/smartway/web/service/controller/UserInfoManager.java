@@ -1,11 +1,17 @@
 package com.smartway.web.service.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.xml.bind.JAXBException;
+
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -61,21 +67,25 @@ public class UserInfoManager {
 	}
 	
 	@RequestMapping(value="/getdetails/{username}", method = RequestMethod.GET, produces= "application/json")
-	public @ResponseBody JSONObject getUserInfo(@PathVariable("username") String username ){
-		logger.debug("Started fetching user data:"+username);
-		System.out.println("----->");
+	public @ResponseBody JSONObject getUserInfo(@PathVariable("username") String username ) throws JsonParseException, JsonMappingException, JAXBException, IOException, ParseException{
 		
-		Collection<UserAuth> userAuth =  userAuthService.findByHSQLQuery("from UserAuth where userName='"+username+"'");
-		for (UserAuth userAuth2 : userAuth) {
-			System.out.println(userAuth2.getPassword());
-			logger.info(userAuth2.getPassword());
+		try{
+			logger.debug("Started fetching user data:"+username);
+			System.out.println("----->");
+			JSONObject job = new JSONObject();
+			Collection<UserAuth> userAuth =  userAuthService.findByHSQLQuery("from UserAuth where userName='"+username+"'");
+			for (UserAuth userAuth2 : userAuth) {
+				UserAuth userth = new GenerateUIPojo().setUserAuthAndInfo(userAuth2);
+				job = (new Common()).pojo2Json(userth);
+			}
+			logger.debug("Completed fetching user data:"+username);
+			return job;
+		}catch(Exception e){
+			logger.error(e.getMessage());
+			status.put("ERROR", e.getMessage().toString());
+			e.printStackTrace();
+			return status;
 		}
-
-		logger.debug("Completed fetching user data:"+username);
-		JSONObject job = new JSONObject();
-		job.put("state",true);
-		job.put("success", "Operation Success");
-		return job;
 	}
 	
 	@RequestMapping(value="/validate",method = RequestMethod.POST,headers = "Content-type=application/json")

@@ -4,9 +4,22 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Index page</title>
+<meta name="description" content ="FREE IOT platform to integrate all your personal iot devices through web and mobile. Helps you to monitor and manage those devices from any loctaion.">
+<meta name="keyword" content="IOT, IOT Devices, IOT Platform, Mobile and web IOT platform, Smartway-iot,smartway-web, smart iot">
+<title>SMARTWAY-IOT</title>
 </head>
-<body>
-<h1>Welcome</h1>
+<body><center>
+<h1>Smartway-IOT</h1>
+
+<p>An open-source FREE IOT platform to integrate all your personal iot devices through web and mobile.<br/> Helps you to monitor and manage all your integrated iot devices from any loctaion.</p>
+</center>
+<b>Under development. Coming soon.</b>
+
+<br/>
+<br/>
+<br/>
+<p> Creator : <a href="https://github.com/Karuturirs">Ravi Sankar Karuturi</a></p>
+<p>Development status <a href="https://github.com/Karuturirs/smartway-web">GitHub</a></p>
+
 </body>
 </html>

@@ -34,4 +34,17 @@ public class GenerateUIPojo {
 		logger.debug(" completed setting USERINFO and Authentication of "+object.getUserId());
 		return user;
 	}
+	
+	public UserAuth setUserAuthAndInfo(UserAuth object){
+		logger.debug(" started setting USERINFO and Authentication details of id::"+object.getUserName());
+		UserAuth userauth = new UserAuth();
+		userauth.setUserName(object.getUserName());
+		userauth.setPassword(object.getPassword());
+		userauth.setUpdTs(object.getUpdTs());
+		UserInfo ob = object.getUserInfo();
+		UserInfo user =  new UserInfo();
+		user.setFirstName(ob.getFirstName());
+		logger.debug(" completed setting USERINFO and Authentication of "+object.getUserName());
+		return userauth;
+	}
 }

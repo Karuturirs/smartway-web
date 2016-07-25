@@ -3,7 +3,7 @@
   <display-name>smartway-web-service</display-name>
   <context-param>
     <param-name>webAppRootKey</param-name>
-    <param-value>smartway</param-value>
+    <param-value>smartway-iot</param-value>
   </context-param>
   
   <servlet>
@@ -21,7 +21,7 @@
   
   <servlet-mapping>
     <servlet-name>smartwayservice</servlet-name>
-    <url-pattern>/</url-pattern>
+    <url-pattern>/*</url-pattern>
   </servlet-mapping>
   <context-param>
     <param-name>contextConfigLocation</param-name>
