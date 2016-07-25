@@ -11,8 +11,9 @@ import com.smartway.web.service.controller.UserInfoManager;
 
 public class GenerateUIPojo {
 	private static Logger logger = Logger.getLogger(GenerateUIPojo.class);
-	public UserInfo setUserInfoAndAuth(UserInfo object ){
-		logger.debug(" started setting USERINFO and Authentication details of id::"+object.getUserId());
+	
+	
+	public UserInfo setUserInfo(UserInfo object ){
 		UserInfo user =  new UserInfo();
 		user.setUserId(object.getUserId());
 		user.setFirstName(object.getFirstName());
@@ -22,13 +23,22 @@ public class GenerateUIPojo {
 		user.setGender(object.getGender());
 		user.setPhone(object.getPhone());
 		user.setUpdTs(object.getUpdTs());
+		return user;
+	}
+	public UserAuth setUserAuth(UserAuth object ){
+		UserAuth userAuth = new UserAuth();
+		userAuth.setUserName(object.getUserName());
+		//userAuth.setPassword(userauth.getPassword());
+		userAuth.setUpdTs(object.getUpdTs());
+		return userAuth;
+	}
+	
+	public UserInfo setUserInfoAndAuth(UserInfo object ){
+		logger.debug(" started setting USERINFO and Authentication details of id::"+object.getUserId());
+		UserInfo user = setUserInfo(object);
 		List<UserAuth> listOfauth = new ArrayList<UserAuth>();
 		for (UserAuth userauth : object.getUserAuths()) {
-			UserAuth userAuth = new UserAuth();
-			userAuth.setUserName(userauth.getUserName());
-			//userAuth.setPassword(userauth.getPassword());
-			userAuth.setUpdTs(userauth.getUpdTs());
-			listOfauth.add(userAuth);
+			listOfauth.add(setUserAuth(userauth));
 		}
 		user.setUserAuths(listOfauth);
 		logger.debug(" completed setting USERINFO and Authentication of "+object.getUserId());
@@ -37,13 +47,10 @@ public class GenerateUIPojo {
 	
 	public UserAuth setUserAuthAndInfo(UserAuth object){
 		logger.debug(" started setting USERINFO and Authentication details of id::"+object.getUserName());
-		UserAuth userauth = new UserAuth();
-		userauth.setUserName(object.getUserName());
-		userauth.setPassword(object.getPassword());
-		userauth.setUpdTs(object.getUpdTs());
-		UserInfo ob = object.getUserInfo();
-		UserInfo user =  new UserInfo();
-		user.setFirstName(ob.getFirstName());
+		UserAuth userauth = setUserAuth(object);
+		UserInfo userinfo = object.getUserInfo();
+		UserInfo user = setUserInfo(userinfo);
+		userauth.setUserInfo(user);
 		logger.debug(" completed setting USERINFO and Authentication of "+object.getUserName());
 		return userauth;
 	}
