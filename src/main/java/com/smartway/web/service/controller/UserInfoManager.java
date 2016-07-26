@@ -19,9 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
 
-import com.smartway.core.managebeans.UserInfoMaster;
 import com.smartway.core.model.UserAuth;
 import com.smartway.core.model.UserInfo;
 import com.smartway.core.mysql.service.GenericService;
@@ -52,8 +50,7 @@ public class UserInfoManager {
 	        for (UserInfo object : userInfos) {
 				listOfObject.add(new GenerateUIPojo().setUserInfoAuthAndDevice(object));
 			}
-			UserInfoMaster userinfomaster = new UserInfoMaster();
-			userinfomaster.setDataList(listOfObject);
+			
 			JSONObject outputJson=(new Common()).pojo2Json(listOfObject,"list");
 			logger.debug("End of the method getAllUserInfo() ");
 			return outputJson;

@@ -62,7 +62,7 @@ public class GenerateUIPojo {
 		if(object.getCol8type()!=null)userdevice.setCol8type(object.getCol8type());
 		if(object.getCol9type()!=null)userdevice.setCol9type(object.getCol9type());
 		if(object.getCol10type()!=null)userdevice.setCol10type(object.getCol10type());
-		
+		userdevice.setUpdTs(object.getUpdTs());
 		
 		return userdevice;
 	}
