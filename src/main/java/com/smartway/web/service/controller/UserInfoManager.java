@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.smartway.core.model.ListUserDevice;
 import com.smartway.core.model.UserAuth;
 import com.smartway.core.model.UserInfo;
 import com.smartway.core.mysql.service.GenericService;
@@ -37,8 +40,10 @@ public class UserInfoManager {
 	GenericService userInfoService ;
 	@Autowired
 	GenericService userAuthService ;
-	/*private GsonBuilder gsonBuilder = new GsonBuilder();
-    private Gson gson;*/
+	@Autowired
+	GenericService listUserDevicesService ;
+	private GsonBuilder gsonBuilder = new GsonBuilder();
+    private Gson gson;
 	JSONObject status = new JSONObject();
     
 	@RequestMapping(value = "/getall", method = RequestMethod.GET, produces= "application/json")
@@ -114,15 +119,39 @@ public class UserInfoManager {
 	}
 	
 	@RequestMapping(value="/{username}/adddevice", method = RequestMethod.POST, produces= "application/json")
-	public @ResponseBody JSONObject addDeviceToUser(@PathVariable("username") String username ) {
+	public @ResponseBody JSONObject addDeviceToUser(@PathVariable("username") String username,@RequestBody JSONObject jsonObject ) {
 		
-		return null;
+		gson = gsonBuilder.create();
+		try {
+			ListUserDevice ldevice = gson.fromJson(jsonObject.toJSONString(), ListUserDevice.class);
+			
+			//jsonObject=updateRecord(editInput);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return jsonObject;
+		
 	}
 	
 	@RequestMapping(value="/{username}/listdevices", method = RequestMethod.GET, produces= "application/json")
 	public @ResponseBody JSONObject listDeviceOfUser(@PathVariable("username") String username ) {
-		
-		return null;
+		logger.debug("Started fetching list of all devices of user:"+username);
+		JSONObject job = new JSONObject();
+		job.put("Button", "Add Devices");
+		job.put("url", "/"+username+"/adddevice");
+		Collection<ListUserDevice> lUserDevices = listUserDevicesService.findBySQLQuery("select "
+				+ "lud.ID, lud.USER_ID, lud.ITEM_ID, lud.ITEM_NAME, lud.ITEM_STATE, lud.ITEM_DESC "
+				+ "from LIST_USER_DEVICES lud"
+				+ " Left JOIN USER_AUTH ua ON  ua.USER_ID =lud.ID "
+				+ "where ua.USER_NAME ='"+username+"'");
+		if(lUserDevices.size()!=0){
+			for (ListUserDevice listUserDevice : lUserDevices) {
+				logger.debug("device name"+listUserDevice.getItemId());
+			}
+			logger.debug("device name"+lUserDevices);
+		}
+		return job;
 	}
 	
 }
