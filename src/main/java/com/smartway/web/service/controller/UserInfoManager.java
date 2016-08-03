@@ -22,11 +22,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.smartway.core.model.DevicesData;
 import com.smartway.core.model.ListUserDevice;
 import com.smartway.core.model.UserAuth;
 import com.smartway.core.model.UserInfo;
 import com.smartway.core.mysql.service.GenericService;
 import com.smartway.core.utils.Common;
+import com.smartway.core.utils.GenerateID;
 import com.smartway.web.common.GenerateUIPojo;
 
 
@@ -42,6 +44,9 @@ public class UserInfoManager {
 	GenericService userAuthService ;
 	@Autowired
 	GenericService listUserDevicesService ;
+	@Autowired
+	GenericService devicesDataService ;
+	
 	private GsonBuilder gsonBuilder = new GsonBuilder();
     private Gson gson;
 	JSONObject status = new JSONObject();
@@ -58,6 +63,8 @@ public class UserInfoManager {
 			
 			JSONObject outputJson=(new Common()).pojo2Json(listOfObject,"list");
 			logger.debug("End of the method getAllUserInfo() ");
+			//GenerateID g= new GenerateID();
+			//System.out.println(g.generateNextID());
 			return outputJson;
 		}catch(Exception e){
 			logger.error(e.getMessage());
@@ -154,5 +161,36 @@ public class UserInfoManager {
 		return job;
 	}
 	
+	
+	@RequestMapping(value="/info/{deviceid}", method = RequestMethod.GET, produces= "application/json")
+	public @ResponseBody JSONObject deviceInfo(@PathVariable("deviceid") String deviceid ) {
+		logger.debug("Started fetching devices info::"+deviceid);
+		JSONObject job = new JSONObject();
+		job.put("Button", "Add Devices");
+		job.put("url", "/info/"+deviceid);
+		Collection<ListUserDevice> lUserDevicesInfo = listUserDevicesService.findBySQLQuery("select *"
+				+ "from LIST_USER_DEVICES lud"
+				+ "where lud.itemId ='"+deviceid+"'");
+		if(lUserDevicesInfo.size()!=0){
+			for (ListUserDevice listUserDevice : lUserDevicesInfo) {
+				logger.debug("device name"+listUserDevice.getItemId());
+			}
+			logger.debug("device name"+lUserDevicesInfo);
+		}
+		return job;
+	}
+	
+	@RequestMapping(value="/data/{deviceid}", method = RequestMethod.GET, produces= "application/json")
+	public @ResponseBody JSONObject deviceData(@PathVariable("deviceid") String deviceid ) {
+		logger.debug("Started fetching devices info::"+deviceid);
+		JSONObject job = new JSONObject();
+		job.put("Button", "Add Devices");
+		job.put("url", "/info/"+deviceid);
+		Collection<DevicesData> lUserDevices = devicesDataService.findBySQLQuery("select *"
+				+ "from DEVICES_DATA"
+				+ "where ITEM_ID ='"+deviceid+"'");
+		
+		return job;
+	}
 }
 
