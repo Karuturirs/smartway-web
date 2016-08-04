@@ -44,8 +44,6 @@ public class UserInfoManager {
 	GenericService userAuthService ;
 	@Autowired
 	GenericService listUserDevicesService ;
-	@Autowired
-	GenericService devicesDataService ;
 	
 	private GsonBuilder gsonBuilder = new GsonBuilder();
     private Gson gson;
@@ -162,35 +160,6 @@ public class UserInfoManager {
 	}
 	
 	
-	@RequestMapping(value="/info/{deviceid}", method = RequestMethod.GET, produces= "application/json")
-	public @ResponseBody JSONObject deviceInfo(@PathVariable("deviceid") String deviceid ) {
-		logger.debug("Started fetching devices info::"+deviceid);
-		JSONObject job = new JSONObject();
-		job.put("Button", "Add Devices");
-		job.put("url", "/info/"+deviceid);
-		Collection<ListUserDevice> lUserDevicesInfo = listUserDevicesService.findBySQLQuery("select *"
-				+ "from LIST_USER_DEVICES lud"
-				+ "where lud.itemId ='"+deviceid+"'");
-		if(lUserDevicesInfo.size()!=0){
-			for (ListUserDevice listUserDevice : lUserDevicesInfo) {
-				logger.debug("device name"+listUserDevice.getItemId());
-			}
-			logger.debug("device name"+lUserDevicesInfo);
-		}
-		return job;
-	}
 	
-	@RequestMapping(value="/data/{deviceid}", method = RequestMethod.GET, produces= "application/json")
-	public @ResponseBody JSONObject deviceData(@PathVariable("deviceid") String deviceid ) {
-		logger.debug("Started fetching devices info::"+deviceid);
-		JSONObject job = new JSONObject();
-		job.put("Button", "Add Devices");
-		job.put("url", "/info/"+deviceid);
-		Collection<DevicesData> lUserDevices = devicesDataService.findBySQLQuery("select *"
-				+ "from DEVICES_DATA"
-				+ "where ITEM_ID ='"+deviceid+"'");
-		
-		return job;
-	}
 }
 
