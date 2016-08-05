@@ -129,7 +129,9 @@ public class UserInfoManager {
 		gson = gsonBuilder.create();
 		try {
 			ListUserDevice ldevice = gson.fromJson(jsonObject.toJSONString(), ListUserDevice.class);
-			
+			ldevice.setItemId(new GenerateID().generateNextID());
+			System.out.println(ldevice.getCol1());
+			listUserDevicesService.save(ldevice);
 			//jsonObject=updateRecord(editInput);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
