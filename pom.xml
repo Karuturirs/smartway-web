@@ -20,31 +20,19 @@
 			<type>jar</type>
 		</dependency>
 	</dependencies>
-  <build>
-  
-		<plugins>
-			
+  	<build>
+		<plugins>        
 			<plugin>
-	            <groupId>org.apache.maven.plugins</groupId>
-	            <artifactId>maven-war-plugin</artifactId>
-	            <version>2.6</version>
-	            <configuration>
-	            	 <webXml>WebContent\WEB-INF\web.xml</webXml>
-	            </configuration>
-	        </plugin>            
-
-			  <!-- JBoss AS plugin to deploy the war. -->
-	    	<plugin>
-				<groupId>org.wildfly.plugins</groupId>
-				<artifactId>wildfly-maven-plugin</artifactId>
-				<version>1.0.0.Final</version>
-				<configuration>
-					<hostname>${wildfly-hostname}</hostname>
-					<port>${wildfly-port}</port>
-					<username>${wildfly-username}</username>
-					<password>${wildfly-password}</password>
-				</configuration>
-			</plugin>
+		        <groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-compiler-plugin</artifactId>
+		        <version>3.1</version>
+		        <configuration>
+		         	<webXml>WebContent\WEB-INF\web.xml</webXml>
+		            <source>1.7</source>
+		            <target>1.7</target>
+		        </configuration>
+		    </plugin>
+		      
 		</plugins>
 				
 	</build>

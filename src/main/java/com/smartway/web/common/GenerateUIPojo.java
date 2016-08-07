@@ -5,10 +5,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.smartway.core.model.ListUserDevice;
+import com.smartway.core.model.ListUserDevices;
 import com.smartway.core.model.UserAuth;
 import com.smartway.core.model.UserInfo;
-import com.smartway.web.service.controller.UserInfoManager;
 
 public class GenerateUIPojo {
 	private static Logger logger = Logger.getLogger(GenerateUIPojo.class);
@@ -34,8 +33,8 @@ public class GenerateUIPojo {
 		return userAuth;
 	}
 	
-	public ListUserDevice setUserDevice(ListUserDevice object ){
-		ListUserDevice userdevice = new ListUserDevice();
+	public ListUserDevices setUserDevice(ListUserDevices object ){
+		ListUserDevices userdevice = new ListUserDevices();
 		if(object.getItemId()!=null)userdevice.setItemId(object.getItemId());
 		if(object.getItemName()!=null)userdevice.setItemName(object.getItemName());
 		if(object.getItemState()!=null)userdevice.setItemState(object.getItemState());
@@ -67,6 +66,15 @@ public class GenerateUIPojo {
 		return userdevice;
 	}
 	
+	/*public ListUserDevices setUserDeviceObject(Object[] object ){
+		
+		for (Object object2 : object) {
+			
+		}
+	 
+		return 
+	}*/
+	
 	public UserInfo setUserInfoAuthAndDevice(UserInfo object ){
 		logger.debug(" started setting USERINFO and Authentication details of id::"+object.getUserId());
 		UserInfo user = setUserInfo(object);
@@ -76,8 +84,8 @@ public class GenerateUIPojo {
 		}
 		user.setUserAuths(listOfauth);
 		
-		List<ListUserDevice> listuserdevices = new ArrayList<ListUserDevice>();
-		for (ListUserDevice userdevice : object.getListUserDevices()) {
+		List<ListUserDevices> listuserdevices = new ArrayList<ListUserDevices>();
+		for (ListUserDevices userdevice : object.getListUserDevices()) {
 			listuserdevices.add(setUserDevice(userdevice));
 		}
 		user.setListUserDevices(listuserdevices);

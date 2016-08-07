@@ -22,8 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.smartway.core.model.DevicesData;
-import com.smartway.core.model.ListUserDevice;
+import com.smartway.core.model.ListUserDevices;
 import com.smartway.core.model.UserAuth;
 import com.smartway.core.model.UserInfo;
 import com.smartway.core.mysql.service.GenericService;
@@ -128,7 +127,7 @@ public class UserInfoManager {
 		
 		gson = gsonBuilder.create();
 		try {
-			ListUserDevice ldevice = gson.fromJson(jsonObject.toJSONString(), ListUserDevice.class);
+			ListUserDevices ldevice = gson.fromJson(jsonObject.toJSONString(), ListUserDevices.class);
 			ldevice.setItemId(GenerateID.getInstance().generateNextID());
 			System.out.println(ldevice.getCol1());
 			listUserDevicesService.save(ldevice);
@@ -148,14 +147,17 @@ public class UserInfoManager {
 		job.put("Button", "Add Devices");
 		job.put("url", "/"+username+"/adddevice");
 		Collection<Object[]> lUserDevices = listUserDevicesService.findBySQLQuery("select "
-				+ "lud.ID, lud.USER_ID, lud.ITEM_ID, lud.ITEM_NAME, lud.ITEM_STATE, lud.ITEM_DESC "
+				+ " * "
 				+ "from LIST_USER_DEVICES lud"
 				+ " Left JOIN USER_AUTH ua ON  ua.USER_ID =lud.ID "
 				+ "where ua.USER_NAME ='"+username+"'");
 		
 		if(lUserDevices.size()!=0){
-			for (Object[] listUserDevice : lUserDevices) {
-				logger.debug("device name"+listUserDevice[0]);
+			List<ListUserDevices> listDevices = new ArrayList<ListUserDevices>();
+			for (Object[] objUserDevice : lUserDevices) {
+				//logger.debug("device name"+listUserDevice[0]);
+				/*ListUserDevices listUserDevices = new ListUserDevices();
+				listUserDevices.set*/
 			}
 			logger.debug("device name"+lUserDevices);
 		}
