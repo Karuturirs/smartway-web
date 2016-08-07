@@ -129,7 +129,7 @@ public class UserInfoManager {
 		gson = gsonBuilder.create();
 		try {
 			ListUserDevice ldevice = gson.fromJson(jsonObject.toJSONString(), ListUserDevice.class);
-			ldevice.setItemId(new GenerateID().generateNextID());
+			ldevice.setItemId(GenerateID.getInstance().generateNextID());
 			System.out.println(ldevice.getCol1());
 			listUserDevicesService.save(ldevice);
 			//jsonObject=updateRecord(editInput);
@@ -147,14 +147,15 @@ public class UserInfoManager {
 		JSONObject job = new JSONObject();
 		job.put("Button", "Add Devices");
 		job.put("url", "/"+username+"/adddevice");
-		Collection<ListUserDevice> lUserDevices = listUserDevicesService.findBySQLQuery("select "
+		Collection<Object[]> lUserDevices = listUserDevicesService.findBySQLQuery("select "
 				+ "lud.ID, lud.USER_ID, lud.ITEM_ID, lud.ITEM_NAME, lud.ITEM_STATE, lud.ITEM_DESC "
 				+ "from LIST_USER_DEVICES lud"
 				+ " Left JOIN USER_AUTH ua ON  ua.USER_ID =lud.ID "
 				+ "where ua.USER_NAME ='"+username+"'");
+		
 		if(lUserDevices.size()!=0){
-			for (ListUserDevice listUserDevice : lUserDevices) {
-				logger.debug("device name"+listUserDevice.getItemId());
+			for (Object[] listUserDevice : lUserDevices) {
+				logger.debug("device name"+listUserDevice[0]);
 			}
 			logger.debug("device name"+lUserDevices);
 		}
