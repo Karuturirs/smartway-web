@@ -23,9 +23,9 @@ public class DeviceInfoManager {
 	private static Logger logger = Logger.getLogger(DeviceInfoManager.class);
 	
 	@Autowired
-	GenericService listUserDevicesService ;
+	GenericService listUserDevicesService;
 	@Autowired
-	GenericService devicesDataService ;
+	GenericService devicesDataService;
 	
 	@RequestMapping(value="/info/{deviceid}", method = RequestMethod.GET, produces= "application/json")
 	public @ResponseBody JSONObject deviceInfo(@PathVariable("deviceid") String deviceid ) {
@@ -36,7 +36,7 @@ public class DeviceInfoManager {
 		Collection<ListUserDevices> lUserDevicesInfo = listUserDevicesService.findBySQLQuery("select *"
 				+ "from LIST_USER_DEVICES lud"
 				+ "where lud.itemId ='"+deviceid+"'");
-		if(lUserDevicesInfo.size()!=0){
+		if(lUserDevicesInfo!=null && lUserDevicesInfo.size()!=0){
 			for (ListUserDevices listUserDevice : lUserDevicesInfo) {
 				logger.debug("device name"+listUserDevice.getItemId());
 			}
