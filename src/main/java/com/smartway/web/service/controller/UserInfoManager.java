@@ -1,17 +1,11 @@
 package com.smartway.web.service.controller;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -58,10 +52,9 @@ public class UserInfoManager {
 				listOfObject.add(new GenerateUIPojo().setUserInfoAuthAndDevice(object));
 			}
 			
-			JSONObject outputJson=(new Common()).pojo2Json(listOfObject,"list");
+			JSONObject outputJson= new JSONObject();
+			outputJson.put("list", (new Common()).pojo2JsonArray(listOfObject));
 			logger.debug("End of the method getAllUserInfo() ");
-			//GenerateID g= new GenerateID();
-			//System.out.println(g.generateNextID());
 			return outputJson;
 		}catch(Exception e){
 			logger.error(e.getMessage());
@@ -73,16 +66,18 @@ public class UserInfoManager {
 	}
 	
 	@RequestMapping(value="/{username}", method = RequestMethod.GET, produces= "application/json")
-	public @ResponseBody JSONObject getUserInfo(@PathVariable("username") String username ) throws JsonParseException, JsonMappingException, JAXBException, IOException, ParseException{
+	public @ResponseBody JSONObject getUserInfo(@PathVariable("username") String username ) {
 		
 		try{
 			logger.debug("Started fetching user data:"+username);
 			System.out.println("----->");
 			JSONObject job = new JSONObject();
-			Collection<UserAuth> userAuth =  userAuthService.findByHSQLQuery("from UserAuth where userName='"+username+"'");
+			Collection<UserAuth> userAuth =  userAuthService.findByHSQLQuery(
+					"from UserAuth "
+					+ "where userName='"+username+"'");
 				for (UserAuth userAuth2 : userAuth) {
 					UserAuth userth = new GenerateUIPojo().setUserAuthAndInfo(userAuth2);
-					job = (new Common()).pojo2Json(userth);
+					job = (new Common()).pojo2JsonObject(userth);
 				}
 				logger.debug("Completed fetching user data:"+username);
 				return job;
@@ -99,7 +94,9 @@ public class UserInfoManager {
 	public @ResponseBody JSONObject getUserInfo(@RequestBody JSONObject jsonObject){
 		logger.debug("Started fetching user validation");
 		JSONObject job = new JSONObject();
-		Collection<UserAuth> userAuth =  userAuthService.findByHSQLQuery("from UserAuth where userName='"+jsonObject.get("username")+"'");
+		Collection<UserAuth> userAuth =  userAuthService.findByHSQLQuery(
+				"from UserAuth "
+				+ "where userName='"+jsonObject.get("username")+"'");
 		if(userAuth.size()!=0){
 			for (UserAuth userAuth2 : userAuth) {
 				System.out.println(userAuth2.getPassword());
@@ -127,7 +124,7 @@ public class UserInfoManager {
 		
 		gson = gsonBuilder.create();
 		try {
-			ListUserDevices ldevice = gson.fromJson(jsonObject.toJSONString(), ListUserDevices.class);
+			ListUserDevices ldevice = gson.fromJson(jsonObject.toString(), ListUserDevices.class);
 			ldevice.setItemId(GenerateID.getInstance().generateNextID());
 			System.out.println(ldevice.getCol1());
 			listUserDevicesService.save(ldevice);
@@ -144,23 +141,22 @@ public class UserInfoManager {
 	public @ResponseBody JSONObject listDeviceOfUser(@PathVariable("username") String username ) {
 		logger.debug("Started fetching list of all devices of user:"+username);
 		JSONObject job = new JSONObject();
+		
 		job.put("Button", "Add Devices");
 		job.put("url", "/"+username+"/adddevice");
-		Collection<Object[]> lUserDevices = listUserDevicesService.findBySQLQuery("select "
-				+ " * "
-				+ "from LIST_USER_DEVICES lud"
-				+ " Left JOIN USER_AUTH ua ON  ua.USER_ID =lud.ID "
-				+ "where ua.USER_NAME ='"+username+"'");
 		
-		if(lUserDevices.size()!=0){
-			List<ListUserDevices> listDevices = new ArrayList<ListUserDevices>();
-			for (Object[] objUserDevice : lUserDevices) {
-				//logger.debug("device name"+listUserDevice[0]);
-				/*ListUserDevices listUserDevices = new ListUserDevices();
-				listUserDevices.set*/
-			}
-			logger.debug("device name"+lUserDevices);
+		Collection<ListUserDevices>  listdevices = listUserDevicesService.findByHSQLQuery(
+				"select lud from ListUserDevices lud "
+				+ "left join lud.userInfo us"
+				+ " left join us.userAuths ua"
+				+ " where ua.userName = '"+username+"'");
+		
+		List<ListUserDevices> listOfObject = new ArrayList<ListUserDevices>();
+		for (ListUserDevices listUserDevices : listdevices) {
+			listOfObject.add(new GenerateUIPojo().setUserDevice(listUserDevices));
 		}
+		job.put("devices",(new Common()).pojo2JsonArray(listOfObject));
+	
 		return job;
 	}
 	

@@ -13,7 +13,7 @@ public class GenerateUIPojo {
 	private static Logger logger = Logger.getLogger(GenerateUIPojo.class);
 	
 	
-	public UserInfo setUserInfo(UserInfo object ){
+	public UserInfo setUserInfo(UserInfo object){
 		UserInfo user =  new UserInfo();
 		user.setUserId(object.getUserId());
 		user.setFirstName(object.getFirstName());
