@@ -37,6 +37,8 @@ public class UserInfoManager {
 	GenericService userAuthService ;
 	@Autowired
 	GenericService listUserDevicesService ;
+	@Autowired
+	GenericService genItemIdService;
 	
 	private GsonBuilder gsonBuilder = new GsonBuilder();
     private Gson gson;
@@ -119,13 +121,21 @@ public class UserInfoManager {
 		
 	}
 	
-	@RequestMapping(value="/{username}/adddevice", method = RequestMethod.POST, produces= "application/json")
-	public @ResponseBody JSONObject addDeviceToUser(@PathVariable("username") String username,@RequestBody JSONObject jsonObject ) {
+	@RequestMapping(value="/{username}/{id}/adddevice", method = RequestMethod.POST, produces= "application/json")
+	public @ResponseBody JSONObject addDeviceToUser(@PathVariable("username") String username,@PathVariable("id") int id,@RequestBody JSONObject jsonObject ) {
 	
 		gson = gsonBuilder.create();
 		try {
 			ListUserDevices ldevice = gson.fromJson(jsonObject.toString(), ListUserDevices.class);
-			ldevice.setItemId(GenerateID.getInstance().generateNextID());
+			UserInfo userInfo = new UserInfo();
+			/*UserAuth userAuth = new UserAuth();
+			userAuth.setUserName(username);
+			List<UserAuth> listuserAuth = new ArrayList<UserAuth>();
+			listuserAuth.add(userAuth);*/
+			userInfo.setUserId(id);
+			//userInfo.setUserAuths(listuserAuth);
+			ldevice.setUserInfo(userInfo);
+			ldevice.setItemId(GenerateID.getInstance().generateNextID(genItemIdService));
 			System.out.println(ldevice.getCol1());
 			listUserDevicesService.save(ldevice);
 			//jsonObject=updateRecord(editInput);
