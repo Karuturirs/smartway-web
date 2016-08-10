@@ -121,7 +121,7 @@ public class UserInfoManager {
 	
 	@RequestMapping(value="/{username}/adddevice", method = RequestMethod.POST, produces= "application/json")
 	public @ResponseBody JSONObject addDeviceToUser(@PathVariable("username") String username,@RequestBody JSONObject jsonObject ) {
-		
+	
 		gson = gsonBuilder.create();
 		try {
 			ListUserDevices ldevice = gson.fromJson(jsonObject.toString(), ListUserDevices.class);
@@ -130,8 +130,9 @@ public class UserInfoManager {
 			listUserDevicesService.save(ldevice);
 			//jsonObject=updateRecord(editInput);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("No able to register the device::"+e.getStackTrace());
+			status.put("Error", "No able to register the device::"+e.getMessage().toString());
+			return status;
 		}
 		return jsonObject;
 		
