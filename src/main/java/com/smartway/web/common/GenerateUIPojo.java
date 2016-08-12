@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import com.smartway.core.model.ListUserDevices;
+import com.smartway.core.model.ListUserDevice;
 import com.smartway.core.model.UserAuth;
 import com.smartway.core.model.UserInfo;
 
@@ -13,7 +13,7 @@ public class GenerateUIPojo {
 	private static Logger logger = Logger.getLogger(GenerateUIPojo.class);
 	
 	
-	public UserInfo setUserInfo(UserInfo object){
+	public UserInfo createUserInfo(UserInfo object){
 		UserInfo user =  new UserInfo();
 		user.setUserId(object.getUserId());
 		user.setFirstName(object.getFirstName());
@@ -25,16 +25,17 @@ public class GenerateUIPojo {
 		user.setUpdTs(object.getUpdTs());
 		return user;
 	}
-	public UserAuth setUserAuth(UserAuth object ){
+	public UserAuth createUserAuth(UserAuth object ){
 		UserAuth userAuth = new UserAuth();
+		userAuth.setUserId(object.getUserId());
 		userAuth.setUserName(object.getUserName());
 		//userAuth.setPassword(userauth.getPassword());
 		userAuth.setUpdTs(object.getUpdTs());
 		return userAuth;
 	}
 	
-	public ListUserDevices setUserDevice(ListUserDevices object ){
-		ListUserDevices userdevice = new ListUserDevices();
+	public ListUserDevice createUserDevice(ListUserDevice object ){
+		ListUserDevice userdevice = new ListUserDevice();
 		if(object.getItemId()!=null)userdevice.setItemId(object.getItemId());
 		if(object.getItemName()!=null)userdevice.setItemName(object.getItemName());
 		if(object.getItemState()!=null)userdevice.setItemState(object.getItemState());
@@ -75,18 +76,14 @@ public class GenerateUIPojo {
 		return 
 	}*/
 	
-	public UserInfo setUserInfoAuthAndDevice(UserInfo object ){
+	public UserInfo createUserInfoAuthAndDevice(UserInfo object ){
 		logger.debug(" started setting USERINFO and Authentication details of id::"+object.getUserId());
-		UserInfo user = setUserInfo(object);
-		List<UserAuth> listOfauth = new ArrayList<UserAuth>();
-		for (UserAuth userauth : object.getUserAuths()) {
-			listOfauth.add(setUserAuth(userauth));
-		}
-		user.setUserAuths(listOfauth);
+		UserInfo user = createUserInfo(object);
+		user.setUserAuth(createUserAuth(object.getUserAuth()));
 		
-		List<ListUserDevices> listuserdevices = new ArrayList<ListUserDevices>();
-		for (ListUserDevices userdevice : object.getListUserDevices()) {
-			listuserdevices.add(setUserDevice(userdevice));
+		List<ListUserDevice> listuserdevices = new ArrayList<ListUserDevice>();
+		for (ListUserDevice userdevice : object.getListUserDevices()) {
+			listuserdevices.add(createUserDevice(userdevice));
 		}
 		user.setListUserDevices(listuserdevices);
 		logger.debug(" completed setting USERINFO and authentication of "+object.getUserId());
@@ -95,9 +92,9 @@ public class GenerateUIPojo {
 	
 	public UserAuth setUserAuthAndInfo(UserAuth object){
 		logger.debug(" started setting USERINFO and Authentication details of id::"+object.getUserName());
-		UserAuth userauth = setUserAuth(object);
+		UserAuth userauth = createUserAuth(object);
 		UserInfo userinfo = object.getUserInfo();
-		UserInfo user = setUserInfo(userinfo);
+		UserInfo user = createUserInfo(userinfo);
 		userauth.setUserInfo(user);
 		logger.debug(" completed setting USERINFO and Authentication of "+object.getUserName());
 		return userauth;

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.smartway.core.model.ListUserDevices;
+import com.smartway.core.model.ListUserDevice;
 import com.smartway.core.model.UserAuth;
 import com.smartway.core.model.UserInfo;
 import com.smartway.core.mysql.service.GenericService;
@@ -51,7 +51,7 @@ public class UserInfoManager {
 			Collection<UserInfo> userInfos = (Collection<UserInfo>) userInfoService.getAll();
 			List<UserInfo> listOfObject = new ArrayList<UserInfo>();
 	        for (UserInfo object : userInfos) {
-				listOfObject.add(new GenerateUIPojo().setUserInfoAuthAndDevice(object));
+				listOfObject.add(new GenerateUIPojo().createUserInfoAuthAndDevice(object));
 			}
 			
 			JSONObject outputJson= new JSONObject();
@@ -126,7 +126,7 @@ public class UserInfoManager {
 	
 		gson = gsonBuilder.create();
 		try {
-			ListUserDevices ldevice = gson.fromJson(jsonObject.toString(), ListUserDevices.class);
+			ListUserDevice ldevice = gson.fromJson(jsonObject.toString(), ListUserDevice.class);
 			UserInfo userInfo = new UserInfo();
 			/*UserAuth userAuth = new UserAuth();
 			userAuth.setUserName(username);
@@ -156,15 +156,15 @@ public class UserInfoManager {
 		job.put("Button", "Add Devices");
 		job.put("url", "/"+username+"/adddevice");
 		
-		Collection<ListUserDevices>  listdevices = listUserDevicesService.findByHSQLQuery(
+		Collection<ListUserDevice>  listdevices = listUserDevicesService.findByHSQLQuery(
 				"select lud from ListUserDevices lud "
 				+ "left join lud.userInfo us"
 				+ " left join us.userAuths ua"
 				+ " where ua.userName = '"+username+"'");
 		
-		List<ListUserDevices> listOfObject = new ArrayList<ListUserDevices>();
-		for (ListUserDevices listUserDevices : listdevices) {
-			listOfObject.add(new GenerateUIPojo().setUserDevice(listUserDevices));
+		List<ListUserDevice> listOfObject = new ArrayList<ListUserDevice>();
+		for (ListUserDevice listUserDevices : listdevices) {
+			listOfObject.add(new GenerateUIPojo().createUserDevice(listUserDevices));
 		}
 		job.put("devices",(new Common()).pojo2JsonArray(listOfObject));
 	

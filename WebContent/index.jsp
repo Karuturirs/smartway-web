@@ -20,6 +20,6 @@
 <br/>
 <p> Creator : <a href="https://github.com/Karuturirs">Ravi Sankar Karuturi</a></p>
 <p>Development status <a href="https://github.com/Karuturirs/smartway-web">GitHub</a></p>
-
+<jsp:include page="/iotdesign/home.jsp"></jsp:include>
 </body>
 </html>

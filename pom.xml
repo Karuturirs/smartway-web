@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.smartway</groupId>
   <artifactId>smartway-web</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <packaging>war</packaging>
   <properties>
   		<jboss-as.deploy.hostname>localhost</jboss-as.deploy.hostname>  <!-- Where to deploy. -->
@@ -10,7 +10,7 @@
 	    <jboss-as.deploy.pass>${myproject.deploy.pass.prod}</jboss-as.deploy.pass>
 	    <plugin.war.warName>${project.build.finalName}</plugin.war.warName>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<smartway.core.version>1.0.0</smartway.core.version>
+		<smartway.core.version>1.0.1</smartway.core.version>
 	</properties>
 	<dependencies>
 		<dependency>

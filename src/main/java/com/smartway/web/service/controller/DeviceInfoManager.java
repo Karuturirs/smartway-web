@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.smartway.core.model.DevicesData;
-import com.smartway.core.model.ListUserDevices;
+import com.smartway.core.model.ListUserDevice;
 import com.smartway.core.mysql.service.GenericService;
 
 
@@ -33,11 +33,11 @@ public class DeviceInfoManager {
 		JSONObject job = new JSONObject();
 		job.put("Button", "Add Devices");
 		job.put("url", "/info/"+deviceid);
-		Collection<ListUserDevices> lUserDevicesInfo = listUserDevicesService.findBySQLQuery("select *"
+		Collection<ListUserDevice> lUserDevicesInfo = listUserDevicesService.findBySQLQuery("select *"
 				+ "from LIST_USER_DEVICES lud"
 				+ "where lud.itemId ='"+deviceid+"'");
 		if(lUserDevicesInfo!=null && lUserDevicesInfo.size()!=0){
-			for (ListUserDevices listUserDevice : lUserDevicesInfo) {
+			for (ListUserDevice listUserDevice : lUserDevicesInfo) {
 				logger.debug("device name"+listUserDevice.getItemId());
 			}
 			logger.debug("device name"+lUserDevicesInfo);
