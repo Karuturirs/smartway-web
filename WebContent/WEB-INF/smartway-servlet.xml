@@ -22,7 +22,7 @@
 	
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="prefix" value="/WEB-INF/iotdesign/" />
+		<property name="prefix" value="/view/" />
 		<property name="suffix" value=".jsp" />
 	</bean>
 	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />

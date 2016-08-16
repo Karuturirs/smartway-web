@@ -2,7 +2,10 @@ package com.smartway.web.service.controller;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
@@ -92,6 +95,52 @@ public class UserInfoManager {
 		}
 	}
 	
+	
+	@RequestMapping(value="/register", method = RequestMethod.POST,headers = "Content-type=application/json")
+	public @ResponseBody JSONObject regiserUser(@RequestBody JSONObject jsonObject) {
+		JSONObject job = new JSONObject();
+		job.put("url", "/register");
+		gson = gsonBuilder.setDateFormat("yyyy-MM-dd").create();
+		try {
+			UserInfo userInfo = gson.fromJson(jsonObject.toString(), UserInfo.class);
+			userInfo.setCrtDt(new Date());
+			
+			userInfoService.save(userInfo);
+			userAuthService.save(userInfo.getUserAuth());
+			//jsonObject=updateRecord(editInput);
+			job.put("Message", "Succesfully registered the user::"+userInfo.getUserName());
+		}catch (Exception e) {
+			logger.error("No able to register the user::"+e.getStackTrace());
+			job.put("Error", "No able to register the device::"+e.getMessage().toString());
+			e.printStackTrace();
+			
+		}
+		return job;
+	}
+	@RequestMapping(value="/{id}/removeuser", method = RequestMethod.POST,produces= "application/json")
+	public @ResponseBody JSONObject removeUser(@PathVariable("id") String userid) {
+		
+		logger.info("Processing to remove the userid:"+userid);
+		JSONObject job = new JSONObject();
+		job.put("url", "/"+userid+"/removeuser");
+		try {
+			UserInfo userInfo = new UserInfo();
+			userInfo.setUserId(Integer.parseInt(userid));
+			userInfo.setUserName("sanka");
+			Map<String,Integer> map = new HashMap<String,Integer>();
+			map.put("urid", Integer.parseInt(userid));
+		//	map.put("urid", Integer.parseInt(userid));
+			userInfoService.deleteByHSQLQuery("delete from UserInfo where userId=:urid", map );
+		//	userAuthService.deleteByHSQLQuery("delete from UserInfo where userId=:urid", map)
+			job.put("Message", "Successfully deleted userid::"+userid);
+		}catch (Exception e) {
+			logger.error("No able to delete the userid:"+userid+" : "+e.getStackTrace());
+			job.put("Error", "No able to delete the userid:"+userid+" : "+e.getStackTrace());
+			e.printStackTrace();
+		}
+		return job;
+	}
+	
 	@RequestMapping(value="/validate",method = RequestMethod.POST,headers = "Content-type=application/json")
 	public @ResponseBody JSONObject getUserInfo(@RequestBody JSONObject jsonObject){
 		logger.debug("Started fetching user validation");
@@ -112,32 +161,30 @@ public class UserInfoManager {
 				}
 			}
 			logger.debug("Completed fetching user validation:");
-			return job;
+			
 		}else{
 			logger.info("No record found with the username:"+jsonObject.get("username"));
-			status.put("Error", "No such Username found in the records");
-			return status;
+			job.put("Error", "No such Username found in the records");
 		}
-		
+		return job;
 	}
 	
-	@RequestMapping(value="/{username}/{id}/adddevice", method = RequestMethod.POST, produces= "application/json")
-	public @ResponseBody JSONObject addDeviceToUser(@PathVariable("username") String username,@PathVariable("id") int id,@RequestBody JSONObject jsonObject ) {
+	@RequestMapping(value="/{username}/adddevice", method = RequestMethod.POST, produces= "application/json")
+	public @ResponseBody JSONObject addDeviceToUser(@PathVariable("username") String username,@RequestBody JSONObject jsonObject ) {
 	
 		gson = gsonBuilder.create();
 		try {
 			ListUserDevice ldevice = gson.fromJson(jsonObject.toString(), ListUserDevice.class);
 			UserInfo userInfo = new UserInfo();
-			/*UserAuth userAuth = new UserAuth();
-			userAuth.setUserName(username);
-			List<UserAuth> listuserAuth = new ArrayList<UserAuth>();
-			listuserAuth.add(userAuth);*/
-			userInfo.setUserId(id);
+			
+			userInfo.setUserName(username);
 			//userInfo.setUserAuths(listuserAuth);
 			ldevice.setUserInfo(userInfo);
+			ldevice.setCrtDt(new Date());
 			ldevice.setItemId(GenerateID.getInstance().generateNextID(genItemIdService));
 			System.out.println(ldevice.getCol1());
 			listUserDevicesService.save(ldevice);
+			logger.info("Added the device :: "+ldevice.getItemId()+" by "+ldevice.getUserInfo().getUserName());
 			//jsonObject=updateRecord(editInput);
 		} catch (Exception e) {
 			logger.error("No able to register the device::"+e.getStackTrace());
@@ -157,10 +204,9 @@ public class UserInfoManager {
 		job.put("url", "/"+username+"/adddevice");
 		
 		Collection<ListUserDevice>  listdevices = listUserDevicesService.findByHSQLQuery(
-				"select lud from ListUserDevices lud "
+				"select lud from ListUserDevice lud "
 				+ "left join lud.userInfo us"
-				+ " left join us.userAuths ua"
-				+ " where ua.userName = '"+username+"'");
+				+ " where us.userName = '"+username+"'");
 		
 		List<ListUserDevice> listOfObject = new ArrayList<ListUserDevice>();
 		for (ListUserDevice listUserDevices : listdevices) {

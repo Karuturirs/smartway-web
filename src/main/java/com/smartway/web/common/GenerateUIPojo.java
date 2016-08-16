@@ -23,6 +23,7 @@ public class GenerateUIPojo {
 		user.setGender(object.getGender());
 		user.setPhone(object.getPhone());
 		user.setUpdTs(object.getUpdTs());
+		user.setCrtDt(object.getCrtDt());
 		return user;
 	}
 	public UserAuth createUserAuth(UserAuth object ){
@@ -41,6 +42,7 @@ public class GenerateUIPojo {
 		if(object.getItemState()!=null)userdevice.setItemState(object.getItemState());
 		if(object.getItemDesc()!=null)userdevice.setItemDesc(object.getItemDesc());
 		userdevice.setId(object.getId());
+		userdevice.setCrtDt(object.getCrtDt());
 		if(object.getCol1()!=null)userdevice.setCol1(object.getCol1());
 		if(object.getCol2()!=null)userdevice.setCol2(object.getCol2());
 		if(object.getCol3()!=null)userdevice.setCol3(object.getCol3());
