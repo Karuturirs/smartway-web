@@ -49,6 +49,8 @@ public class UserInfoManager {
     
 	@RequestMapping(value = "/getall", method = RequestMethod.GET, produces= "application/json")
 	public @ResponseBody JSONObject getAllUserInfo(){
+		JSONObject job = new JSONObject();
+		job.put("url", "/userinfo/getall");
 		try{
 			logger.debug("Started fetching all user data");
 			Collection<UserInfo> userInfos = (Collection<UserInfo>) userInfoService.getAll();
@@ -56,27 +58,24 @@ public class UserInfoManager {
 	        for (UserInfo object : userInfos) {
 				listOfObject.add(new GenerateUIPojo().createUserInfoAuthAndDevice(object));
 			}
-			
-			JSONObject outputJson= new JSONObject();
-			outputJson.put("list", (new Common()).pojo2JsonArray(listOfObject));
+	        job.put("list", (new Common()).pojo2JsonArray(listOfObject));
 			logger.debug("End of the method getAllUserInfo() ");
-			return outputJson;
+			
 		}catch(Exception e){
 			logger.error(e.getMessage());
-			status.put("ERROR", e.getMessage().toString());
+			job.put("ERROR", e.getMessage().toString());
 			e.printStackTrace();
-			return status;
 		}
+		return job;
 		
 	}
 	
 	@RequestMapping(value="/{username}", method = RequestMethod.GET, produces= "application/json")
 	public @ResponseBody JSONObject getUserInfo(@PathVariable("username") String username ) {
-		
+		JSONObject job = new JSONObject();
+		job.put("url", "/"+username);
 		try{
 			logger.debug("Started fetching user data:"+username);
-			System.out.println("----->");
-			JSONObject job = new JSONObject();
 			Collection<UserAuth> userAuth =  userAuthService.findByHSQLQuery(
 					"from UserAuth "
 					+ "where userName='"+username+"'");
@@ -84,22 +83,21 @@ public class UserInfoManager {
 					UserAuth userth = new GenerateUIPojo().setUserAuthAndInfo(userAuth2);
 					job = (new Common()).pojo2JsonObject(userth);
 				}
-				logger.debug("Completed fetching user data:"+username);
-				return job;
+				logger.debug("Completed fetching user data:"+username);	
 			
 		}catch(Exception e){
 			logger.error(e.getMessage());
-			status.put("ERROR", e.getMessage().toString());
+			job.put("ERROR", e.getMessage().toString());
 			e.printStackTrace();
-			return status;
 		}
+		return job;
 	}
 	
 	
 	@RequestMapping(value="/register", method = RequestMethod.POST,headers = "Content-type=application/json")
 	public @ResponseBody JSONObject regiserUser(@RequestBody JSONObject jsonObject) {
 		JSONObject job = new JSONObject();
-		job.put("url", "/register");
+		job.put("url", "/userinfo/register");
 		gson = gsonBuilder.setDateFormat("yyyy-MM-dd").create();
 		try {
 			UserInfo userInfo = gson.fromJson(jsonObject.toString(), UserInfo.class);
@@ -111,7 +109,7 @@ public class UserInfoManager {
 			job.put("Message", "Succesfully registered the user::"+userInfo.getUserName());
 		}catch (Exception e) {
 			logger.error("No able to register the user::"+e.getStackTrace());
-			job.put("Error", "No able to register the device::"+e.getMessage().toString());
+			job.put("ERROR", "No able to register the device::"+e.getMessage().toString());
 			e.printStackTrace();
 			
 		}
@@ -122,20 +120,19 @@ public class UserInfoManager {
 		
 		logger.info("Processing to remove the userid:"+userid);
 		JSONObject job = new JSONObject();
-		job.put("url", "/"+userid+"/removeuser");
+		job.put("url", "/userinfo/"+userid+"/removeuser");
 		try {
 			UserInfo userInfo = new UserInfo();
 			userInfo.setUserId(Integer.parseInt(userid));
 			userInfo.setUserName("sanka");
 			Map<String,Integer> map = new HashMap<String,Integer>();
 			map.put("urid", Integer.parseInt(userid));
-		//	map.put("urid", Integer.parseInt(userid));
 			userInfoService.deleteByHSQLQuery("delete from UserInfo where userId=:urid", map );
 		//	userAuthService.deleteByHSQLQuery("delete from UserInfo where userId=:urid", map)
 			job.put("Message", "Successfully deleted userid::"+userid);
 		}catch (Exception e) {
 			logger.error("No able to delete the userid:"+userid+" : "+e.getStackTrace());
-			job.put("Error", "No able to delete the userid:"+userid+" : "+e.getStackTrace());
+			job.put("ERROR", "No able to delete the userid:"+userid+" : "+e.getStackTrace());
 			e.printStackTrace();
 		}
 		return job;
@@ -145,6 +142,7 @@ public class UserInfoManager {
 	public @ResponseBody JSONObject getUserInfo(@RequestBody JSONObject jsonObject){
 		logger.debug("Started fetching user validation");
 		JSONObject job = new JSONObject();
+		job.put("url", "/userinfo/validate");
 		Collection<UserAuth> userAuth =  userAuthService.findByHSQLQuery(
 				"from UserAuth "
 				+ "where userName='"+jsonObject.get("username")+"'");
@@ -164,14 +162,15 @@ public class UserInfoManager {
 			
 		}else{
 			logger.info("No record found with the username:"+jsonObject.get("username"));
-			job.put("Error", "No such Username found in the records");
+			job.put("ERROR", "No such Username found in the records");
 		}
 		return job;
 	}
 	
 	@RequestMapping(value="/{username}/adddevice", method = RequestMethod.POST, produces= "application/json")
 	public @ResponseBody JSONObject addDeviceToUser(@PathVariable("username") String username,@RequestBody JSONObject jsonObject ) {
-	
+		JSONObject job = new JSONObject();
+		job.put("url", "/userinfo/"+username+"/adddevice");
 		gson = gsonBuilder.create();
 		try {
 			ListUserDevice ldevice = gson.fromJson(jsonObject.toString(), ListUserDevice.class);
@@ -185,13 +184,13 @@ public class UserInfoManager {
 			System.out.println(ldevice.getCol1());
 			listUserDevicesService.save(ldevice);
 			logger.info("Added the device :: "+ldevice.getItemId()+" by "+ldevice.getUserInfo().getUserName());
+			job.put("Message", "Successfully registered the device id ::"+ldevice.getItemId()+" by "+ldevice.getUserInfo().getUserName());
 			//jsonObject=updateRecord(editInput);
 		} catch (Exception e) {
 			logger.error("No able to register the device::"+e.getStackTrace());
-			status.put("Error", "No able to register the device::"+e.getMessage().toString());
-			return status;
+			job.put("ERROR", "No able to register the device::"+e.getMessage().toString());
 		}
-		return jsonObject;
+		return job;
 		
 	}
 	
@@ -201,7 +200,7 @@ public class UserInfoManager {
 		JSONObject job = new JSONObject();
 		
 		job.put("Button", "Add Devices");
-		job.put("url", "/"+username+"/adddevice");
+		job.put("url", "/userinfo/"+username+"/adddevice");
 		
 		Collection<ListUserDevice>  listdevices = listUserDevicesService.findByHSQLQuery(
 				"select lud from ListUserDevice lud "
