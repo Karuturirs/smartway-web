@@ -45,7 +45,7 @@ public class UserInfoManager {
 	
 	private GsonBuilder gsonBuilder = new GsonBuilder();
     private Gson gson;
-	JSONObject status = new JSONObject();
+	//JSONObject status = new JSONObject();
     
 	@RequestMapping(value = "/getall", method = RequestMethod.GET, produces= "application/json")
 	public @ResponseBody JSONObject getAllUserInfo(){
