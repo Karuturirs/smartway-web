@@ -55,9 +55,17 @@ public class DeviceInfoManager {
 		JSONObject job = new JSONObject();
 		job.put("url", "/"+deviceid+"/data");
 		JSONObject deviceinfo = deviceInfo(deviceid);
+		
+		
 		logger.debug(deviceinfo.get("deviceinfo"));
 		Collection<DevicesData> lUserDevices = devicesDataService.findByHSQLQuery("from DevicesData"
 				+ "where listUserDevice.itemId ='"+deviceid+"'");
+		for (DevicesData devicesData : lUserDevices) {
+		
+			
+			
+			
+		}
 		
 		return job;
 	}

@@ -1,6 +1,7 @@
 package com.smartway.web.common;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -101,4 +102,11 @@ public class GenerateUIPojo {
 		logger.debug(" completed setting USERINFO and Authentication of "+object.getUserName());
 		return userauth;
 	}
+	
+	public <K,V,T>  HashMap<K, V> manageUIData(T object){
+		
+		
+		
+		return null;
+	}	
 }
