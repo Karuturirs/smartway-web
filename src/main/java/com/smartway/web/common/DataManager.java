@@ -8,7 +8,7 @@ public class DataManager<T> {
 	HashMap<String,T> cobj;
 	String deviceId;
 	String deviceName;
-	
+	String deviceStatus;
 		
 	public HashMap<String, T> getCobj() {
 		return cobj;
@@ -27,6 +27,12 @@ public class DataManager<T> {
 	}
 	public void setDeviceName(String deviceName) {
 		this.deviceName = deviceName;
+	}
+	public String getDeviceStatus() {
+		return deviceStatus;
+	}
+	public void setDeviceStatus(String deviceStatus) {
+		this.deviceStatus = deviceStatus;
 	}
 	
 
