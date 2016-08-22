@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
@@ -55,16 +56,31 @@ public class DeviceInfoManager {
 	}
 	
 	@RequestMapping(value="/{deviceid}/data", method = RequestMethod.GET, produces= "application/json")
-	public @ResponseBody JSONObject showDeviceData(@PathVariable("deviceid") String deviceid ) {
+	public @ResponseBody JSONObject showDeviceData(@PathVariable("deviceid") String deviceid,@RequestParam(value="view",  required=false) String mints ) {
 		logger.debug("Started fetching devices data::"+deviceid);
-		
+		Long mintsL = 1440L;
+		if(mints != null && !mints.equals("")){
+			mintsL= Long.parseLong(mints);
+		}
+		 
 		JSONObject deviceinfo = deviceInfo(deviceid);
 		GenerateUIPojo gup = new GenerateUIPojo();
 		DataManager dm =  gup.createDataManager(deviceinfo);
 		
 		logger.debug(deviceinfo.get("deviceinfo"));
+		
+		/*
+		 *For time management data
+		 * 1day = 1440  mints
+		 * 3days = 4320 mints
+		 * 
+		 */
+		long now = System.currentTimeMillis();
+		long nowMinus5Minutes = now - (mintsL * 60L * 1000L);
+		Timestamp nowMinus5MinutesAsTimestamp = new Timestamp(nowMinus5Minutes);
+		logger.debug("::--::"+nowMinus5MinutesAsTimestamp);
 		Collection<DevicesData> lUserDevices = devicesDataService.findByHSQLQuery("from DevicesData dd "
-				+ "where dd.listUserDevice.itemId ='"+deviceid+"'");
+				+ "where dd.listUserDevice.itemId ='"+deviceid+"' and dd.updTs >= '"+nowMinus5MinutesAsTimestamp+"'");
 		for (DevicesData devicesData : lUserDevices) {
 			 gup.manageCoreDataBean(devicesData,dm);		
 		}
