@@ -1,9 +1,7 @@
 package com.smartway.web.service.controller;
 
-import java.awt.Window.Type;
 import java.sql.Timestamp;
 import java.util.Collection;
-import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
@@ -22,7 +20,6 @@ import com.smartway.core.model.DevicesData;
 import com.smartway.core.model.ListUserDevice;
 import com.smartway.core.mysql.service.GenericService;
 import com.smartway.core.utils.Common;
-import com.smartway.web.common.CoreDataBeans;
 import com.smartway.web.common.DataManager;
 import com.smartway.web.common.GenerateUIPojo;
 
@@ -36,9 +33,9 @@ public class DeviceInfoManager {
     private Gson gson;
 	
 	@Autowired
-	GenericService listUserDevicesService;
+	GenericService<ListUserDevice, ?> listUserDevicesService;
 	@Autowired
-	GenericService devicesDataService;
+	GenericService<DevicesData, ?> devicesDataService;
 	
 	@RequestMapping(value="/{deviceid}/info", method = RequestMethod.GET, produces= "application/json")
 	public @ResponseBody JSONObject deviceInfo(@PathVariable("deviceid") String deviceid ) {
@@ -65,7 +62,7 @@ public class DeviceInfoManager {
 		 
 		JSONObject deviceinfo = deviceInfo(deviceid);
 		GenerateUIPojo gup = new GenerateUIPojo();
-		DataManager dm =  gup.createDataManager(deviceinfo);
+		DataManager<?> dm =  gup.createDataManager(deviceinfo);
 		
 		logger.debug(deviceinfo.get("deviceinfo"));
 		
@@ -82,7 +79,7 @@ public class DeviceInfoManager {
 		Collection<DevicesData> lUserDevices = devicesDataService.findByHSQLQuery("from DevicesData dd "
 				+ "where dd.listUserDevice.itemId ='"+deviceid+"' and dd.updTs >= '"+nowMinus5MinutesAsTimestamp+"'");
 		for (DevicesData devicesData : lUserDevices) {
-			 gup.manageCoreDataBean(devicesData,dm);		
+			 gup.manageCoreDataBean(devicesData,dm);	
 		}
 		//logger.debug((new Common()).pojo2JsonObject(dm));
 		JSONObject jo =(new Common()).pojo2JsonObject(dm);

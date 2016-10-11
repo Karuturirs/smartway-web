@@ -200,7 +200,7 @@ public class GenerateUIPojo {
 		return dm;
 	}
 	
-	public void manageCoreDataBean(DevicesData devicesData, DataManager dm){
+	public void manageCoreDataBean(DevicesData devicesData, DataManager<?> dm){
 		
 		if(devicesData.getCol1()!=null){
 			CoreDataBeans<Timestamp, String> cc = (CoreDataBeans<Timestamp, String>) dm.getCobj().get("col1");
@@ -242,6 +242,7 @@ public class GenerateUIPojo {
 			CoreDataBeans<Timestamp, String> cc =(CoreDataBeans<Timestamp, String>) dm.getCobj().get("col10");
 			cc.getMapcontent().put(devicesData.getUpdTs(), devicesData.getCol10());
 		}
+		
 		//return dm; 
 	}
 }
