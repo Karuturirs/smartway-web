@@ -2,6 +2,7 @@ package com.smartway.web.service.controller;
 
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
@@ -95,7 +96,42 @@ public class DeviceInfoManager {
 		gson = gsonBuilder.create();
 		try {
 			DevicesData devicesData = gson.fromJson(jsonObject.toString(), DevicesData.class);
-			devicesDataService.save(devicesData);
+			Collection<ListUserDevice> lUserDevicesInfo = listUserDevicesService.findByHSQLQuery(
+					"from ListUserDevice lud where lud.itemId='"+deviceid+"'");
+			ListUserDevice lud =null;
+			for (ListUserDevice listUserDevice : lUserDevicesInfo) {
+				 lud = new  GenerateUIPojo().createUserDevice(listUserDevice);
+				//job.put("deviceinfo",(new Common()).pojo2JsonObject(lud));
+			}
+			
+			job.put("col1",lud.getCol1());
+			
+		}catch (Exception e) {
+			logger.error("No able to insert data for device id::"+deviceid+"::"+e.getStackTrace());
+			job.put("ERROR", "No able to insert data for device id::"+deviceid+"::"+e.getMessage().toString());
+			e.printStackTrace();
+			
+		}
+		return job;
+	}
+	
+	@RequestMapping(value="/{deviceid}/restdatainto", method = RequestMethod.POST,headers = "Content-type=application/json")
+	public @ResponseBody JSONObject addFlexyDeviceData(@PathVariable("deviceid") String deviceid,@RequestBody JSONObject jsonObject) {
+		logger.debug("Started Inserting device id::"+deviceid+" data "+jsonObject.toJSONString());
+		JSONObject job = new JSONObject();
+		job.put("url", "/"+deviceid+"/restdatainto");
+		gson = gsonBuilder.create();
+		ListUserDevice lud = null;
+		try {
+			
+			Collection<ListUserDevice> lUserDevicesInfo = listUserDevicesService.findByHSQLQuery(
+					"from ListUserDevice lud where lud.itemId='"+deviceid+"'");
+			for (ListUserDevice listUserDevice : lUserDevicesInfo) {
+				lud = new  GenerateUIPojo().createUserDevice(listUserDevice);
+				//job.put("deviceinfo",(new Common()).pojo2JsonObject(lud));
+			}
+			
+			
 			job.put("Message", "Successfully inserted the data  into device id::"+deviceid);
 		}catch (Exception e) {
 			logger.error("No able to insert data for device id::"+deviceid+"::"+e.getStackTrace());
